@@ -1,0 +1,167 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://unpkg.com/todomvc-app-css@2.0.6/index.css"/>
+    <title>Document</title>
+</head>
+<!-- <body> -->
+    <!-- <div id="app" v-bind:title="title">{{ message }} -->
+        <!-- <span :title="title"> Hello World</span> -->
+        <!-- الattributes بربطها بال جافا اسكريبت بالعنصر v-bind:attributeName =""-->
+        <!-- اما attribute ال events بربطها بالجافا عن طريق ال v-on:eventName=""
+        v-on:click ,وله اختصار ايضا @eventName="" -->
+    <!-- </div> -->
+
+<section class="todoapp">
+<header class="header">
+<h1>Todos</h1>
+<input class="new-todo" autocomplete="off" placeholder="what needs to be done" v-model="newTodo" @keyup.enter="addnewTodo">
+</header>
+    <section class="main">
+        <input type="checkbox" class="toggle-all" id="toggle-all">
+        <label for="toggle-all">Mark All Complete</label>
+<ul class="todo-list">
+<li  v-for="todo in filterdTodos" class="todo" :class="{completed:todo.completed,editing:todo==editingTodo}">
+<div class="view">
+   <input type="checkbox" v-model="todo.completed">
+    <label @dblclick="editTodo(todo)"> {{ todo.title }}</label>
+    <button class="destroy" @click="deleteTodo(todo)"></button>
+</div>
+<input type="text" class="edit" v-model="todo.title" @keyup.enter="doneEditing()">
+</li>
+</ul>
+</section>
+<footer class="footer"><!--footer begin-->
+<span class="todo-count">
+<strong>{{ remainingTodos }}</strong> {{ remainingText }}
+</span>
+<ul class="filters">
+<li><a href="#" @click.prevent="visability='all'" class="{selected:visability='all'}">All</a></li>
+<li><a href="#"@click.prevent="visability='active'" class="{selected:visability='active'}">Active</a></li>
+<li><a href="#" @click.prevent="visability='completed'"class="{selected:visability='completed'}">completed</a></li>
+</ul>
+<button @click="removeCompleted()"  class="clear-completed">Clear completed</button>
+
+</footer><!--footer end-->
+
+
+</section>
+
+    <script src="js/vue.js"></script>
+    <script>
+
+// var app = new Vue({
+// el: '#app',
+// data:{
+//    message:"hello vue .js"
+// //    title:"hello",
+
+// }
+// });
+//دي طريقة اخرى 
+// var filters = {
+//     'all': function(todos){
+//         return todos;
+//     },
+//     'active': function(todos){
+//         return todos.filter(function(todo){
+//             return ! todo.completed;
+//         });
+//     },
+//    'completed': function(todos){
+//        return todos.filter(function(todo){
+//            return todo.completed;
+//        });
+//    }
+// }
+var app = new Vue({
+el: ".todoapp",
+data:{
+    todos:[
+    {title:"test1",
+    completed:false},
+    {title:"test2",
+    completed:false},
+         ],
+         newTodo:"",
+       visability: "all",
+       editingTodo:null,
+       filters : {
+    'all': function(todos){
+        return todos;
+    },
+    'active': function(todos){
+        return todos.filter(function(todo){
+            return ! todo.completed;
+        });
+    },
+   'completed': function(todos){
+       return todos.filter(function(todo){
+           return todo.completed;
+       });
+   }
+       }
+
+    },
+    methods:{
+        deleteTodo:function(todo){
+          this.todos.splice(this.todos.indexOf(todo),1);  
+        },
+        addnewTodo: function(newTodo){
+            if(this.newTodo == "")
+            return;
+            this.todos.push({
+               title:this.newTodo,
+               completed:false 
+            })
+            this.newTodo ="";
+        },
+        removeCompleted: function() {
+           this.todos = this.filters.active( this.todos ); 
+     
+              },
+              editTodo:function(todo){
+                  this.editingTodo = todo;
+              },
+              doneEditing(){
+                  if(this.editingTodo.title == '') {
+                  this.deleteTodo(this.editingTodo);
+                  }
+                this.editingTodo = null;  
+              }
+        
+    },
+     computed :{
+        filterdTodos: function(){
+          return this.filters[ this.visability ] (this.todos);
+        },
+        remainingTodos: function(){
+           return this.filters.active(this.todos) . length 
+             
+           
+              
+        },
+        remainingText: function(){
+            if( this.filters.active(this.todos) . length > 1){
+             return "items";  
+           }
+               return "item"; 
+        }
+       
+     }
+});
+
+
+
+
+
+
+
+
+
+
+    </script>
+<!-- </body> -->
+</html>
